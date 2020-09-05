@@ -13,12 +13,25 @@
 
 namespace haizei {
 
+
 class IValue {
 public :
     virtual std::string toString() = 0;
-};
+    virtual bool isTrue = 0;
+    virtual bool isFalse() = 0;
+    bool isFalse() { return !(this->isTrue()); }
+    virtual SIValue operator<(IValue &) = 0;
+    bool  operator>(IValue &a);
+    bool  operator==(IValue &a);
+    bool  operator!=(IValue &a);
+    bool  operator>=(IValue &a);
+    bool  operator<=(IValue &a);
+}
 
 typedef std::shared_ptr<IValue> SIValue;
+extern SIValue HZfalse;
+extern SIValue HZTrue;
+extern SIValue HZNULL;
 
 template<typename T>
 class BaseValue : public IValue {
@@ -32,6 +45,14 @@ public :
         return false;
     }
     bool isFalse() { return !(this->isTrue()); }
+    bool operator&&(const IValue &a) {
+        if (!this->isTrue() && a.isTrue) return HZTrue;
+        return HZfalse;
+    }
+    bool operator||(const IValue &a) {
+        if (!this->isTrue() || a.isTrue) return HZTrue;
+        return HZfalse;
+    }
 
 protected:
     T val;
@@ -40,6 +61,7 @@ protected:
 class IntValue : public BaseValue<int> {
 public :
     IntValue(int);
+    virtual bool operator<Ivalue &>;
 };
 
 class FloatValue : public BaseValue<double> {

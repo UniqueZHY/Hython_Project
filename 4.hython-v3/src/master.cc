@@ -37,8 +37,16 @@ SIValue ExprMaster::run(ASTNode &tree, std::shared_ptr<Parameter> &p) {
         case TIMES: return BOP(*);
         case DIV: return BOP(/);
         case MOD: return BOP(%);
-        case OR: return BOP(||);
-        case AND: return BOP(&&);
+        case OR: {
+            if (MR(tree[0], p)->thisTrue()) return HZTrue;
+            if (MR(tree[1], p)->thisTrue()) return HZTrue;
+            return HZFalse;
+        } break;
+        case AND: {
+            if (MR(tree[0], p)->isFalse()) return HZFalse;
+            if (MR(tree[1], p)->isFalse()) return HZFalse;
+            return HZTrue;
+        } break;
         case GT: return BOP(>);
         case LITTLE: return BOP(<);
         case EQ: return BOP(==);
