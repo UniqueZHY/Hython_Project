@@ -38,8 +38,8 @@ SIValue ExprMaster::run(ASTNode &tree, std::shared_ptr<Parameter> &p) {
         case DIV: return BOP(/);
         case MOD: return BOP(%);
         case OR: {
-            if (MR(tree[0], p)->thisTrue()) return HZTrue;
-            if (MR(tree[1], p)->thisTrue()) return HZTrue;
+            if (MR(tree[0], p)->isTrue()) return HZTrue;
+            if (MR(tree[1], p)->isTrue()) return HZTrue;
             return HZFalse;
         } break;
         case AND: {
@@ -47,12 +47,12 @@ SIValue ExprMaster::run(ASTNode &tree, std::shared_ptr<Parameter> &p) {
             if (MR(tree[1], p)->isFalse()) return HZFalse;
             return HZTrue;
         } break;
-        case GT: return BOP(>);
-        case LITTLE: return BOP(<);
-        case EQ: return BOP(==);
-        case GE: return BOP(>=);
-        case LE: return BOP(<=);
-        case NE: return BOP(!=);
+        case GT: return BOP(>) ? HZTrue : HZFalse;
+        case LITTLE: return BOP(<) ? HZTrue : HZFalse;
+        case EQ: return BOP(==) ? HZTrue : HZFalse;
+        case GE: return BOP(>=) ? HZTrue : HZFalse;
+        case LE: return BOP(<=) ? HZTrue : HZFalse;
+        case NE: return BOP(!=) ? HZTrue : HZFalse;
         case ASSIGN: {
             std::string var(tree[0].text());
             p->get_param(var);

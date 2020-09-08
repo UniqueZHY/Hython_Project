@@ -13,69 +13,72 @@
 
 namespace haizei {
 
+typedef std::shared_ptr<IValue> SIValue;
+extern SIValue HZNULL;
+extern SIValue HZTrue;
+extern SIValue HZFalse;
+
+class IntValue;
+class FloatValue;
+class StringValue;
 
 class IValue {
 public :
     virtual std::string toString() = 0;
-    virtual bool isTrue = 0;
-    virtual bool isFalse() = 0;
-    bool isFalse() { return !(this->isTrue()); }
-    virtual SIValue operator<(IValue &) = 0;
-    bool  operator>(IValue &a);
-    bool  operator==(IValue &a);
-    bool  operator!=(IValue &a);
-    bool  operator>=(IValue &a);
-    bool  operator<=(IValue &a);
-}
-
-typedef std::shared_ptr<IValue> SIValue;
-extern SIValue HZfalse;
-extern SIValue HZTrue;
-extern SIValue HZNULL;
+    virtual bool isTrue() const = 0;
+    bool isFalse() const;
+    virtual bool little_compare(IntValue &);
+    virtual bool little_compare(FloatValue &);
+    virtual bool little_compare(StringValue &);
+    virtual bool re_little_compare(IValue &) = 0;
+    bool operator<(IValue &);
+    bool operator>(IValue &);
+    bool operator==(IValue &);
+    bool operator!=(IValue &);
+    bool operator<=(IValue &);
+    bool operator>=(IValue &);
+};
 
 template<typename T>
 class BaseValue : public IValue {
 public :
-    BaseValue(T val) : val(val) {}
+    BaseValue(T val) : __val(val) {}
     virtual std::string toString() {
-        return std::to_string(val);
+        return std::to_string(__val);
     }
     virtual bool isTrue() {
         if (val) return true;
         return false;
     }
-    bool isFalse() { return !(this->isTrue()); }
-    bool operator&&(const IValue &a) {
-        if (!this->isTrue() && a.isTrue) return HZTrue;
-        return HZfalse;
-    }
-    bool operator||(const IValue &a) {
-        if (!this->isTrue() || a.isTrue) return HZTrue;
-        return HZfalse;
-    }
+    T val() const { return __val; }
 
 protected:
-    T val;
+    T __val;
 };
 
 class IntValue : public BaseValue<int> {
 public :
     IntValue(int);
-    virtual bool operator<Ivalue &>;
+    virtual bool re_little_compare(IValue &);
+    virtual bool little_compare(IntValue &);
+    virtual bool little_compare(FloatValue &);
 };
 
 class FloatValue : public BaseValue<double> {
 public :
     FloatValue(double);
+    virtual bool re_little_compare(IValue &);
+    virtual bool little_compare(IntValue &);
+    virtual bool little_compare(FloatValue &);
 };
 
 class StringValue : public BaseValue<std::string> {
 public :
     StringValue(std::string);
-    virtual bool isTrue();
+    virtual bool isTrue() const;
+    virtual bool re_little_compare(IValue &);
+    virtual bool little_compare(StringValue &);
 };
-
-extern SIValue HZNULL;
 
 } // end of namespace haizei
 

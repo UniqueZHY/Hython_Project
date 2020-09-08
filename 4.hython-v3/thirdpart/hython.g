@@ -1,4 +1,4 @@
-grammar hython;
+grammar hl;
 
 options {
     language = C;
